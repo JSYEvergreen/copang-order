@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(scanBasePackages = ["com.example.demo"])
+@SpringBootApplication(scanBasePackages = ["com.copang"])
 @ConfigurationPropertiesScan
 class ApiApplication
 
