@@ -4,3 +4,34 @@ server:
 spring:
   config:
     import: application-db.yml
+
+---
+################################ local ################################
+spring:
+  config:
+    activate:
+      on-profile: local
+
+copang:
+  servers:
+    auth: http://localhost:3000
+---
+################################ test ################################
+spring:
+  config:
+    activate:
+      on-profile: test
+
+copang:
+  servers:
+    auth: dummy
+---
+################################ live ################################
+spring:
+  config:
+    activate:
+      on-profile: live
+
+copang:
+  servers:
+    auth: http://localhost:3000
