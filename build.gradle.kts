@@ -28,6 +28,7 @@ subprojects {
     apply(plugin = "kotlin-jpa")
 
     dependencies {
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("io.github.microutils:kotlin-logging:2.0.10")
