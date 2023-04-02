@@ -40,4 +40,6 @@ data class Product(
             sellerInfo = UserInfo.empty()
         )
     }
+
+    fun quantityOf(quantity: Int) = copy(quantity = quantity)
 }

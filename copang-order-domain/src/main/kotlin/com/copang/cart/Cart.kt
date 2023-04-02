@@ -1,7 +1,6 @@
 package com.copang.cart
 
 import com.copang.auth.UserInfo
-import com.copang.constants.EMPTY_ID
 import com.copang.product.Product
 import java.time.LocalDateTime
 
@@ -14,12 +13,7 @@ data class Cart(
     val updatedAt: LocalDateTime? = null,
     val deletedAt: LocalDateTime? = null,
 ) {
-    companion object {
-        fun emptyOf(buyerInfo: UserInfo) = Cart(
-            id = EMPTY_ID,
-            buyerInfo = buyerInfo,
-        )
-    }
+    fun filledOf(buyerInfo: UserInfo, product: Product) = copy(buyerInfo = buyerInfo, product = product)
 }
 
 enum class CartStatus {
