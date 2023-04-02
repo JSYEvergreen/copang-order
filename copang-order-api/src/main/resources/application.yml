@@ -14,7 +14,7 @@ spring:
 
 copang:
   servers:
-    auth: http://localhost:3000
+    auth: http://localhost:8080
 ---
 ################################ test ################################
 spring:
