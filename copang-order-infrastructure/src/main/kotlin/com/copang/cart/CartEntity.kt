@@ -26,10 +26,4 @@ class CartEntity(
 
     @Column(name = "deleted_at")
     val deletedAt: LocalDateTime? = null,
-
 ) : BaseEntity()
-
-enum class CartStatus {
-    ACTIVE,
-    DONE,
-}
