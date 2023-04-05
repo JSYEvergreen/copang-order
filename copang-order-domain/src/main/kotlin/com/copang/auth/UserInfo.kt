@@ -1,7 +1,7 @@
 package com.copang.auth
 
-import com.copang.constants.EMPTY_ID
-import com.copang.constants.EMPTY_STRING
+import com.copang.common.constants.EMPTY_ID
+import com.copang.common.constants.EMPTY_STRING
 
 data class UserInfo(
     val id: Long,

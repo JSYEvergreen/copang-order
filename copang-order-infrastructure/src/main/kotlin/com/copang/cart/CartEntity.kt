@@ -1,6 +1,6 @@
 package com.copang.cart
 
-import com.copang.BaseEntity
+import com.copang.common.BaseEntity
 import java.time.LocalDateTime
 import javax.persistence.*
 

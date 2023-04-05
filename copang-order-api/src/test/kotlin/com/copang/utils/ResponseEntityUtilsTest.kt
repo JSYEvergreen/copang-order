@@ -1,9 +1,10 @@
 package com.copang.utils
 
 import com.copang.auth.UserInfo
-import com.copang.exception.CopangException
-import com.copang.exception.ErrorType
-import com.copang.web.ApiResponse
+import com.copang.common.utils.ResponseEntityUtils
+import com.copang.common.exception.CopangException
+import com.copang.common.exception.ErrorType
+import com.copang.common.ApiResponse
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -155,7 +156,7 @@ class ResponseEntityUtilsTest {
         }
 
         // when
-        val actualContent = com.copang.utils.ResponseEntityUtils.getOrThrows(
+        val actualContent = ResponseEntityUtils.getOrThrows(
             className = givenClassName,
             methodName = givenMethodName,
             errorMessage = givenErrorMessage,
@@ -180,7 +181,7 @@ class ResponseEntityUtilsTest {
         }
 
         // when
-        val actualContent = com.copang.utils.ResponseEntityUtils.getOrThrows(
+        val actualContent = ResponseEntityUtils.getOrThrows(
             className = givenClassName,
             methodName = givenMethodName,
             errorMessage = givenErrorMessage,

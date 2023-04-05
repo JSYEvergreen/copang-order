@@ -1,9 +1,10 @@
 package com.copang.web.interceptor
 
 import com.copang.auth.AccessToken
-import com.copang.exception.CopangException
-import com.copang.exception.ErrorType
-import com.copang.utils.AuthUtils
+import com.copang.common.interceptor.OutRequestAuthInterceptor
+import com.copang.common.exception.CopangException
+import com.copang.common.exception.ErrorType
+import com.copang.common.utils.AuthUtils
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

@@ -1,7 +1,7 @@
 package com.copang.auth
 
-import com.copang.exception.CopangException
-import com.copang.exception.ErrorType
+import com.copang.common.exception.CopangException
+import com.copang.common.exception.ErrorType
 
 private const val BEARER_PREFIX = "Bearer "
 

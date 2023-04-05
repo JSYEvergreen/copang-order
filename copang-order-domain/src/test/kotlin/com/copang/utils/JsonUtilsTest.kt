@@ -1,8 +1,8 @@
 package com.copang.utils
 
 import com.copang.auth.UserInfo
-import com.copang.utils.JsonUtils.toJsonOrNull
-import com.copang.utils.JsonUtils.toJsonString
+import com.copang.common.utils.JsonUtils.toJsonOrNull
+import com.copang.common.utils.JsonUtils.toJsonString
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test

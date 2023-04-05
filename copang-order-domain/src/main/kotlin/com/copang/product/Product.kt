@@ -1,9 +1,9 @@
 package com.copang.product
 
 import com.copang.auth.UserInfo
-import com.copang.constants.EMPTY_ID
-import com.copang.constants.EMPTY_NUMBER
-import com.copang.constants.EMPTY_STRING
+import com.copang.common.constants.EMPTY_ID
+import com.copang.common.constants.EMPTY_NUMBER
+import com.copang.common.constants.EMPTY_STRING
 
 data class Product(
     val id: Long,

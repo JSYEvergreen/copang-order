@@ -1,7 +1,7 @@
 package com.copang.mock
 
 import com.copang.auth.UserInfo
-import com.copang.web.ApiResponse
+import com.copang.common.ApiResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
