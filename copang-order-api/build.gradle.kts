@@ -6,4 +6,6 @@ dependencies {
     implementation(project(":copang-order-application"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    testImplementation(project(":tests"))
 }
