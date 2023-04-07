@@ -27,7 +27,7 @@ class ProductHttpRepository(
             errorType = ErrorType.PRODUCT_SERVER_ERROR,
             apiCall = {
                 copangRestTemplate.exchange<ApiResponse<ProductsHttpResponse>>(
-                    "${productServerUrl}/tmp",
+                    "${productServerUrl}/info/search",
                     HttpMethod.POST,
                     HttpEntity(
                         ProductsHttpRequest(
