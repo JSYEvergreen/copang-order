@@ -23,9 +23,11 @@ class InRequestAuthInterceptor(
         val accessToken = AccessToken(
             tokenWithPrefix = request.getHeader(HttpHeaders.AUTHORIZATION),
         )
-        val userInfo: UserInfo = authRepository.getUserInfoByAccessTokenOrThrows(accessToken.original())
         AuthUtils.setAccessToken(accessToken)
+
+        val userInfo: UserInfo = authRepository.getUserInfoByAccessTokenOrThrows(accessToken.original())
         AuthUtils.setUserInfo(userInfo)
+
         log.info { "accessToken 검증 완료(accessToken=$accessToken, userInfo=$userInfo)" }
         return true
     }

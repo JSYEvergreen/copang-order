@@ -3,16 +3,16 @@ package com.copang.web.cart
 import com.copang.auth.UserInfo
 import com.copang.cart.Cart
 import com.copang.cart.CartService
-import com.copang.common.utils.AuthUtils
 import com.copang.common.ApiResponse
-import org.springframework.stereotype.Controller
+import com.copang.common.utils.AuthUtils
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 
-@Controller
+@RestController
 class CartController(
     private val cartService: CartService,
 ){
-    @GetMapping("/api/carts/buyer")
+    @GetMapping("/order/api/carts/buyer")
     fun getAllCarts(): ApiResponse<AllCartsResponse> =
         ApiResponse.success(
             content = cartService.getAllCarts().toResponse()

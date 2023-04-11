@@ -2,9 +2,9 @@ package com.copang.repository.auth
 
 import com.copang.auth.AuthRepository
 import com.copang.auth.UserInfo
+import com.copang.common.ApiResponse
 import com.copang.common.exception.ErrorType
 import com.copang.common.utils.ResponseEntityUtils
-import com.copang.common.ApiResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Repository
@@ -26,7 +26,7 @@ class AuthHttpRepository(
                 errorType = ErrorType.AUTH_SERVER_ERROR,
                 apiCall = {
                     copangRestTemplate.exchange<ApiResponse<UserInfo>>(
-                        "${authServerUrl}/buyer/login",
+                        "${authServerUrl}/login",
                         HttpMethod.GET,
                         null,
                     )

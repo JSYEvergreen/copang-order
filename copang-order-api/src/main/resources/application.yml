@@ -14,8 +14,8 @@ spring:
 
 copang:
   servers:
-    auth: http://localhost:8080
-    product: http://localhost:8080
+    auth: http://copang.r-e.kr/buyer
+    product: http://localhost:8080/product
 ---
 ################################ test ################################
 spring:
@@ -27,6 +27,17 @@ copang:
   servers:
     auth: dummy
     product: dummy
+---
+################################ dev ################################
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+copang:
+  servers:
+    auth: http://copang.r-e.kr/buyer
+    product: http://localhost:8080
 ---
 ################################ live ################################
 spring:

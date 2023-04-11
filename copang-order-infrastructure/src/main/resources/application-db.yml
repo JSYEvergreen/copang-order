@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: db-config.yml
   jpa:
     hibernate:
       ddl-auto: none
@@ -21,12 +23,6 @@ spring:
         format_sql: true
         show_sql: true
         use_sql_comments: true
-# Datasource
-  datasource:
-    username: postgres
-    password: 1234
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/copang?serverTimezone=UTC&characterEncoding=UTF-8
 ---
 ################################ test ################################
 spring:
@@ -50,6 +46,22 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:~/mem:h2;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;
 ---
+################################ dev ################################
+spring:
+  config:
+    activate:
+      on-profile: dev
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: false
+        use_sql_comments: false
+---
 ################################ live ################################
 spring:
   config:
@@ -65,4 +77,3 @@ spring:
         format_sql: false
         show_sql: false
         use_sql_comments: false
-# Datasource

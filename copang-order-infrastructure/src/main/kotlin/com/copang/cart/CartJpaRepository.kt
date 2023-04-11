@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 internal class CartJpaRepository(
-    private val repository: Repository,
+    private val repository: CartInnerJpaRepository,
 ) : CartRepository {
     override fun getAllActiveByBuyerId(buyerId: Long): List<Cart> {
         return repository.findAllByBuyerIdAndStatusIn(
@@ -23,8 +23,8 @@ internal class CartJpaRepository(
             )
         }
     }
+}
 
-    internal interface Repository : JpaRepository<CartEntity, Long> {
-        fun findAllByBuyerIdAndStatusIn(buyerId: Long, statuses: List<CartStatus>): List<CartEntity>
-    }
+internal interface CartInnerJpaRepository : JpaRepository<CartEntity, Long> {
+    fun findAllByBuyerIdAndStatusIn(buyerId: Long, statuses: List<CartStatus>): List<CartEntity>
 }
