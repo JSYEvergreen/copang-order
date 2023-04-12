@@ -12,4 +12,8 @@ object JsonUtils {
     fun Any.toJsonString(): String = runCatching {
         objectMapper.writeValueAsString(this)
     }.getOrDefault("")
+
+    fun Any.toPrettyJsonString(): String = runCatching {
+        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+    }.getOrDefault("")
 }
