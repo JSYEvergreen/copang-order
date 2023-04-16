@@ -1,9 +1,13 @@
 package com.copang.cart
 
 import com.copang.auth.UserInfo
+import com.copang.common.exception.CopangException
+import com.copang.common.exception.ErrorType
 import com.copang.product.Product
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 internal class CartJpaRepository(
@@ -23,8 +27,43 @@ internal class CartJpaRepository(
             )
         }
     }
+
+    override fun getActiveCartByBuyerIdAndProductId(buyerId: Long, productId: Long): Cart =
+        repository.findByBuyerIdAndProductIdAndStatusIn(
+            buyerId = buyerId,
+            productId = productId,
+            statuses = listOf(CartStatus.ACTIVE),
+        )?.let {
+            Cart(
+                id = it.id!!,
+                product = Product.initOf(id = productId, quantity = it.quantity),
+                buyerInfo = UserInfo.initOf(id = buyerId)
+            )
+        } ?: Cart.empty()
+
+    override fun addCart(cart: Cart) {
+        val cartEntity = CartEntity(
+            productId = cart.product.id,
+            buyerId = cart.buyerInfo.id,
+        ).update(
+            quantity = cart.product.quantity,
+            status = CartStatus.ACTIVE,
+        )
+        repository.save(cartEntity)
+    }
+
+    @Transactional
+    override fun updateCart(cart: Cart) {
+        val cartEntity = repository.findByIdOrNull(cart.id)
+            ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+        cartEntity.update(
+            quantity = cart.product.quantity,
+            status = cart.status,
+        )
+    }
 }
 
 internal interface CartInnerJpaRepository : JpaRepository<CartEntity, Long> {
     fun findAllByBuyerIdAndStatusIn(buyerId: Long, statuses: List<CartStatus>): List<CartEntity>
+    fun findByBuyerIdAndProductIdAndStatusIn(buyerId: Long, productId: Long, statuses: List<CartStatus>): CartEntity?
 }

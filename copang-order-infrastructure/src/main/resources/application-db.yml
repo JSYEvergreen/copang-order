@@ -13,6 +13,14 @@ spring:
   config:
     activate:
       on-profile: local
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
 # JPA
   jpa:
     hibernate:
