@@ -19,7 +19,7 @@ class CopangException(
 
     constructor(
         errorType: ErrorType,
-        cause: Throwable?,
+        cause: Throwable? = null,
         message: String = "",
     ) : this(
         message = message.ifBlank { errorType.message },

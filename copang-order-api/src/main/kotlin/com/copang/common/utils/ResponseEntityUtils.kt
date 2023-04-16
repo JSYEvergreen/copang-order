@@ -1,9 +1,9 @@
 package com.copang.common.utils
 
+import com.copang.common.ApiResponse
 import com.copang.common.exception.CopangException
 import com.copang.common.exception.ErrorType
 import com.copang.common.utils.AccessTokenLogger.Companion.accessTokenLogger
-import com.copang.common.ApiResponse
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.ResourceAccessException

@@ -7,6 +7,7 @@ enum class ErrorType(
     /**
      * 주문 관련 에러 : 30000~
      */
+    ORDER_SERVER_ERROR("30000", "주문 서버 에러가 발생했습니다."),
 
 
     /**
