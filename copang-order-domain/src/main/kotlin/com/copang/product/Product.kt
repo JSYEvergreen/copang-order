@@ -42,4 +42,6 @@ data class Product(
     }
 
     fun quantityOf(quantity: Int) = copy(quantity = quantity)
+
+    fun addQuantity(addQuantity: Int) = copy(quantity = this.quantity + addQuantity)
 }

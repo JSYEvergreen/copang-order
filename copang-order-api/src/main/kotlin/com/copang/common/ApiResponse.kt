@@ -11,15 +11,15 @@ data class ApiResponse<T>(
     val message: String? = null,
 ) {
     companion object {
-        fun <R> success(content: R?) = ApiResponse(
+        fun <R> success(content: R? = null) = ApiResponse(
             isSuccess = true,
             content = content,
         )
 
-        fun <R> fail(errorType: ErrorType) = ApiResponse<R>(
+        fun <R> fail(errorType: ErrorType, message: String? = null) = ApiResponse<R>(
             isSuccess = false,
             errorCode = errorType.errorCode,
-            message = errorType.message,
+            message = message ?: errorType.message,
         )
 
         fun <R> fail(errorCode: String? = "", message: String? = "") = ApiResponse<R>(

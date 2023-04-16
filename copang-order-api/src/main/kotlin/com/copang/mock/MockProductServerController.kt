@@ -14,19 +14,19 @@ class MockProductServerController {
     @PostMapping("/product/info/search")
     fun foo(@RequestBody productsHttpRequest: ProductsHttpRequest) = ApiResponse.success(
         ProductsHttpResponse(
-            content = listOf(
+            content = productsHttpRequest.productIds.map {
                 ProductsBodyHttpResponse(
-                    productId = 1234,
-                    productCode = "ABC123",
-                    productName = "My Product",
-                    productDescription = "This is a sample product",
-                    productInformation = "Some product information",
+                    productId = it,
+                    productCode = "ABC$it",
+                    productName = "My Product$it",
+                    productDescription = "This is a sample product$it",
+                    productInformation = "Some product information$it",
                     productQuantity = 10,
                     productCost = 5000,
                     productIsSale = true,
                     productSellerId = 5678
-                ),
-            )
+                )
+            }
         )
     )
 }

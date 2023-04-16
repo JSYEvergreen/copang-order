@@ -11,13 +11,6 @@ class CartEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    @Column(name = "product_quantity")
-    val quantity: Int,
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    val status: CartStatus,
-
     @Column(name = "buyer_id")
     val buyerId: Long,
 
@@ -26,4 +19,19 @@ class CartEntity(
 
     @Column(name = "deleted_at")
     val deletedAt: LocalDateTime? = null,
-) : BaseEntity()
+) : BaseEntity() {
+    @Column(name = "product_quantity")
+    var quantity: Int = 0
+        protected set
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    var status: CartStatus = CartStatus.ACTIVE
+        protected set
+
+    fun update(quantity: Int, status: CartStatus): CartEntity {
+        this.quantity = quantity
+        this.status = status
+        return this
+    }
+}
