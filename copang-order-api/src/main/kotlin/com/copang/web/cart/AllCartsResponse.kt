@@ -7,6 +7,7 @@ data class AllCartsResponse(
 )
 
 data class AllCartsBodyResponse(
+    val cartId: Long,
     val productId: Long,
     val productQuantity: Int,
     val productCode: String,
