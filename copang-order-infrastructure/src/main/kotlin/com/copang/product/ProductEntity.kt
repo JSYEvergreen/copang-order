@@ -1,6 +1,6 @@
 package com.copang.product
 
-import com.copang.BaseEntity
+import com.copang.common.BaseEntity
 import javax.persistence.*
 
 @Entity

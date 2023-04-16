@@ -11,4 +11,6 @@ dependencies {
     implementation(project(":copang-order-infrastructure"))
 
     implementation("org.springframework.boot:spring-boot-starter")
+
+    testImplementation(project(":tests"))
 }

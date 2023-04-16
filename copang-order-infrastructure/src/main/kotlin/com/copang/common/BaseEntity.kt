@@ -1,6 +1,6 @@
-package com.copang
+package com.copang.common
 
-import com.copang.utils.TimeUtils
+import com.copang.common.utils.TimeUtils
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.MappedSuperclass

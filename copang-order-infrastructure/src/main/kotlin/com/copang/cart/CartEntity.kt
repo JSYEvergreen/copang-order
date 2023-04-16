@@ -1,6 +1,6 @@
 package com.copang.cart
 
-import com.copang.BaseEntity
+import com.copang.common.BaseEntity
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -26,10 +26,4 @@ class CartEntity(
 
     @Column(name = "deleted_at")
     val deletedAt: LocalDateTime? = null,
-
 ) : BaseEntity()
-
-enum class CartStatus {
-    ACTIVE,
-    DONE,
-}

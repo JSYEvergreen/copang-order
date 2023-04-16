@@ -1,4 +1,4 @@
-package com.copang.constants
+package com.copang.common.constants
 
 import java.time.ZoneId
 

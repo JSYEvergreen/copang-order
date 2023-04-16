@@ -28,9 +28,18 @@ subprojects {
     apply(plugin = "kotlin-jpa")
 
     dependencies {
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        implementation("io.github.microutils:kotlin-logging:2.0.10")
         testImplementation("io.mockk:mockk:1.13.2")
+        testImplementation("org.springframework.boot:spring-boot-starter-test:3.0.5")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+        testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.5")
+    }
+
+    tasks.test {
+        useJUnitPlatform()
     }
 }
 

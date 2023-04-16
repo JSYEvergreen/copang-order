@@ -1,6 +1,6 @@
 package com.copang.order
 
-import com.copang.BaseEntity
+import com.copang.common.BaseEntity
 import com.copang.product.ProductEntity
 import javax.persistence.*
 
