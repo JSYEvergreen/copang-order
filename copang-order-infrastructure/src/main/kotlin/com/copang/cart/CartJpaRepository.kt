@@ -73,9 +73,17 @@ internal class CartJpaRepository(
             id = cartEntity.id!!,
             buyerInfo = UserInfo.initOf(cartEntity.buyerId),
             product = Product.initOf(id = cartEntity.productId, quantity = cartEntity.quantity),
+            status = cartEntity.status,
             createdAt = cartEntity.createdAt,
             updatedAt = cartEntity.updatedAt,
         )
+    }
+
+    @Transactional
+    override fun deleteCart(cart: Cart) {
+        val cartEntity = repository.findByIdOrNull(cart.id)
+            ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+        cartEntity.delete()
     }
 }
 

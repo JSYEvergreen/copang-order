@@ -42,6 +42,17 @@ class CartController(
         )
         return ApiResponse.success()
     }
+
+    @PostMapping("/order/api/delete-cart/{cartId}")
+    fun deleteCart(
+        @PathVariable cartId: Long,
+    ): ApiResponse<Any?> {
+        cartService.deleteCart(
+            buyer = AuthUtils.getUserInfo(),
+            cartId = cartId,
+        )
+        return ApiResponse.success()
+    }
 }
 
 private fun List<Cart>.toResponse(): AllCartsResponse {
