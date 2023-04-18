@@ -1,6 +1,7 @@
 package com.copang.cart
 
 import com.copang.common.BaseEntity
+import com.copang.common.utils.TimeUtils
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -16,9 +17,6 @@ class CartEntity(
 
     @Column(name = "product_id")
     val productId: Long,
-
-    @Column(name = "deleted_at")
-    val deletedAt: LocalDateTime? = null,
 ) : BaseEntity() {
     @Column(name = "product_quantity")
     var quantity: Int = 0
@@ -29,9 +27,18 @@ class CartEntity(
     var status: CartStatus = CartStatus.ACTIVE
         protected set
 
+    @Column(name = "deleted_at")
+    var deletedAt: LocalDateTime? = null
+        protected set
+
     fun update(quantity: Int, status: CartStatus): CartEntity {
         this.quantity = quantity
         this.status = status
         return this
+    }
+
+    fun delete() {
+        this.deletedAt = TimeUtils.now()
+        this.status = CartStatus.DELETED
     }
 }

@@ -319,4 +319,56 @@ class CartServiceTest {
         verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
         actualThrownException.errorCode shouldBe ErrorType.PRODUCT_QUANTITY_EXCEEDED_ERROR.errorCode
     }
+
+    @Test
+    fun `장바구니 중 한 상품을 삭제하려고 할 때 해당 장바구니 정보가 존재하지 않으면 에러가 발생한다`() {
+        // given
+        val givenUserInfo = UserInfoTestData.userInfo()
+        val givenCartId = 1L
+
+        every {
+            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+                cartId = givenCartId,
+                buyerId = givenUserInfo.id,
+            )
+        } throws CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+
+        // when
+        val actualThrownException = shouldThrowExactly<CopangException> {
+            sut.deleteCart(
+                buyer = givenUserInfo,
+                cartId = givenCartId,
+            )
+        }
+
+        // then
+        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_CART_ERROR.errorCode
+    }
+
+    @Test
+    fun `장바구니 중 한 상품을 삭제하면 삭제 요청이 날라간다`() {
+        // given
+        val givenUserInfo = UserInfoTestData.userInfo()
+        val givenCartId = 1L
+
+        val givenExistCart = CartTestData.cart(
+            id = 1L,
+            product = ProductTestData.product(id = 1L, quantity = 1)
+        )
+        every {
+            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+                cartId = givenCartId,
+                buyerId = givenUserInfo.id,
+            )
+        } returns givenExistCart
+        every { cartRepository.deleteCart(any()) } just Runs
+
+        // when
+        sut.deleteCart(buyer = givenUserInfo, cartId = givenCartId)
+
+        // then
+        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { cartRepository.deleteCart(any()) }
+    }
 }

@@ -6,4 +6,5 @@ interface CartRepository {
     fun getActiveCartByBuyerIdAndProductId(buyerId: Long, productId: Long): Cart
     fun updateCart(cart: Cart)
     fun getActiveByIdAndBuyerIdOrThrows(cartId: Long, buyerId: Long): Cart
+    fun deleteCart(cart: Cart)
 }

@@ -81,4 +81,11 @@ class CartService(
             )
         )
     }
+
+    fun deleteCart(buyer: UserInfo, cartId: Long) {
+        val existCart = cartRepository.getActiveByIdAndBuyerIdOrThrows(cartId = cartId, buyerId = buyer.id)
+        cartRepository.deleteCart(
+            cart = existCart,
+        )
+    }
 }
