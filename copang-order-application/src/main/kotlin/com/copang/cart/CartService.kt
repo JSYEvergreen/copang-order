@@ -66,4 +66,19 @@ class CartService(
         }
         return product
     }
+
+    fun updateCart(buyer: UserInfo, cartId: Long, quantity: Int) {
+        val existCart = cartRepository.getActiveByIdAndBuyerIdOrThrows(cartId = cartId, buyerId = buyer.id)
+        getProductCartAddable(
+            productId = existCart.product.id,
+            quantity = quantity,
+        )
+
+        cartRepository.updateCart(
+            cart = existCart.filledOf(
+                buyerInfo = buyer,
+                product = existCart.product.quantityOf(quantity)
+            )
+        )
+    }
 }

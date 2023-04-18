@@ -5,4 +5,5 @@ interface CartRepository {
     fun addCart(cart: Cart)
     fun getActiveCartByBuyerIdAndProductId(buyerId: Long, productId: Long): Cart
     fun updateCart(cart: Cart)
+    fun getActiveByIdAndBuyerIdOrThrows(cartId: Long, buyerId: Long): Cart
 }
