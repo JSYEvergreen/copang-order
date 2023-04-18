@@ -219,4 +219,104 @@ class CartServiceTest {
         val cart: Cart = capturingSlog.captured
         cart.product.quantity shouldBe givenExistCart.product.quantity + givenQuantity
     }
+
+    @Test
+    fun `장바구니의 상품 개수를 수정하려고 할 때 장바구니에 정보가 존재하지 않으면 에러가 발생한다`() {
+        // given
+        val givenUserInfo = UserInfoTestData.userInfo()
+        val givenCartId = 1L
+        val givenQuantity = 2
+        every {
+            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+                cartId = givenCartId,
+                buyerId = givenUserInfo.id,
+            )
+        } throws CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+
+        // when
+        val actualThrownException = shouldThrowExactly<CopangException> {
+            sut.updateCart(
+                buyer = givenUserInfo,
+                cartId = givenCartId,
+                quantity = givenQuantity,
+            )
+        }
+
+        // then
+        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_CART_ERROR.errorCode
+    }
+
+    @Test
+    fun `장바구니의 상품 개수를 수정하려고 할 때 상품이 존재하지 않으면 상품 에러가 발생한다`() {
+        // given
+        val givenUserInfo = UserInfoTestData.userInfo()
+        val givenCartId = 1L
+        val givenQuantity = 20
+
+        val givenExistCart = CartTestData.cart(
+            id = 1L,
+            product = ProductTestData.product(id = 1L, quantity = 1)
+        )
+        every {
+            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+                cartId = givenCartId,
+                buyerId = givenUserInfo.id,
+            )
+        } returns givenExistCart
+
+        every { productRepository.getProductsByIdsIn(any()) } returns emptyList()
+
+        // when
+        val actualThrownException = shouldThrowExactly<CopangException> {
+            sut.updateCart(
+                buyer = givenUserInfo,
+                cartId = givenCartId,
+                quantity = givenQuantity,
+            )
+        }
+
+        // then
+        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_PRODUCT_ERROR.errorCode
+    }
+
+    @Test
+    fun `장바구니의 상품 개수를 수정하려고 할 때 상품의 재고보다 큰 개수로 수정하려고 하면 상품 에러가 발생한다`() {
+        // given
+        val givenUserInfo = UserInfoTestData.userInfo()
+        val givenCartId = 1L
+        val givenQuantity = 20
+
+        val givenExistCart = CartTestData.cart(
+            id = 1L,
+            product = ProductTestData.product(id = 1L, quantity = 1)
+        )
+        every {
+            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+                cartId = givenCartId,
+                buyerId = givenUserInfo.id,
+            )
+        } returns givenExistCart
+
+        val givenProducts: List<Product> = listOf(
+            ProductTestData.product(id = 1L, code = "code1", quantity = givenQuantity - 10),
+        )
+        every { productRepository.getProductsByIdsIn(any()) } returns givenProducts
+
+        // when
+        val actualThrownException = shouldThrowExactly<CopangException> {
+            sut.updateCart(
+                buyer = givenUserInfo,
+                cartId = givenCartId,
+                quantity = givenQuantity,
+            )
+        }
+
+        // then
+        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        actualThrownException.errorCode shouldBe ErrorType.PRODUCT_QUANTITY_EXCEEDED_ERROR.errorCode
+    }
 }

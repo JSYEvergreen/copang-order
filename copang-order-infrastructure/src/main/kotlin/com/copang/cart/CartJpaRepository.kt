@@ -61,6 +61,22 @@ internal class CartJpaRepository(
             status = cart.status,
         )
     }
+
+    override fun getActiveByIdAndBuyerIdOrThrows(cartId: Long, buyerId: Long): Cart {
+        val cartEntity = repository.findByIdOrNull(cartId)
+            ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+
+        if (cartEntity.status != CartStatus.ACTIVE || cartEntity.buyerId != buyerId) {
+            throw CopangException(errorType = ErrorType.NOT_EXIST_CART_ERROR)
+        }
+        return Cart(
+            id = cartEntity.id!!,
+            buyerInfo = UserInfo.initOf(cartEntity.buyerId),
+            product = Product.initOf(id = cartEntity.productId, quantity = cartEntity.quantity),
+            createdAt = cartEntity.createdAt,
+            updatedAt = cartEntity.updatedAt,
+        )
+    }
 }
 
 internal interface CartInnerJpaRepository : JpaRepository<CartEntity, Long> {

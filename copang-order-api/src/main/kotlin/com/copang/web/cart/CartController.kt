@@ -5,10 +5,7 @@ import com.copang.cart.Cart
 import com.copang.cart.CartService
 import com.copang.common.ApiResponse
 import com.copang.common.utils.AuthUtils
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -28,6 +25,19 @@ class CartController(
         cartService.addCart(
             buyer = AuthUtils.getUserInfo(),
             productId = request.productId!!,
+            quantity = request.quantity!!,
+        )
+        return ApiResponse.success()
+    }
+
+    @PostMapping("/order/api/update-cart/{cartId}")
+    fun updateCart(
+        @PathVariable cartId: Long,
+        @Valid @RequestBody request: UpdateCartRequest,
+    ): ApiResponse<Any?> {
+        cartService.updateCart(
+            buyer = AuthUtils.getUserInfo(),
+            cartId = cartId,
             quantity = request.quantity!!,
         )
         return ApiResponse.success()
