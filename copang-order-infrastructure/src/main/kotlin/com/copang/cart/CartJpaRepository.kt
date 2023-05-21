@@ -41,6 +41,26 @@ internal class CartJpaRepository(
             )
         } ?: Cart.empty()
 
+    override fun getActiveByIdAndBuyerIdOrThrows(cartId: Long, buyerId: Long): Cart {
+        val cartEntity = repository.findByIdOrNull(cartId)
+            ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+
+        if (cartEntity.status != CartStatus.ACTIVE || cartEntity.buyerId != buyerId) {
+            throw CopangException(errorType = ErrorType.NOT_EXIST_CART_ERROR)
+        }
+        return Cart(
+            id = cartEntity.id!!,
+            buyerInfo = UserInfo.initOf(cartEntity.buyerId),
+            product = Product.initOf(id = cartEntity.productId, quantity = cartEntity.quantity),
+            status = cartEntity.status,
+            createdAt = cartEntity.createdAt,
+            updatedAt = cartEntity.updatedAt,
+        )
+    }
+
+    /**
+     * TODO : CUD에서 응답값으로 Cart 내보내도록 하기
+     */
     override fun addCart(cart: Cart) {
         val cartEntity = CartEntity(
             productId = cart.product.id,
@@ -62,28 +82,18 @@ internal class CartJpaRepository(
         )
     }
 
-    override fun getActiveByIdAndBuyerIdOrThrows(cartId: Long, buyerId: Long): Cart {
-        val cartEntity = repository.findByIdOrNull(cartId)
-            ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
-
-        if (cartEntity.status != CartStatus.ACTIVE || cartEntity.buyerId != buyerId) {
-            throw CopangException(errorType = ErrorType.NOT_EXIST_CART_ERROR)
-        }
-        return Cart(
-            id = cartEntity.id!!,
-            buyerInfo = UserInfo.initOf(cartEntity.buyerId),
-            product = Product.initOf(id = cartEntity.productId, quantity = cartEntity.quantity),
-            status = cartEntity.status,
-            createdAt = cartEntity.createdAt,
-            updatedAt = cartEntity.updatedAt,
-        )
-    }
-
     @Transactional
     override fun deleteCart(cart: Cart) {
         val cartEntity = repository.findByIdOrNull(cart.id)
             ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
         cartEntity.delete()
+    }
+
+    @Transactional
+    override fun createOrder(cart: Cart) {
+        val cartEntity = repository.findByIdOrNull(cart.id)
+            ?: throw CopangException(ErrorType.NOT_EXIST_CART_ERROR)
+        cartEntity.update(status = CartStatus.DONE)
     }
 }
 

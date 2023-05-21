@@ -5,6 +5,9 @@ import com.copang.common.constants.EMPTY_ID
 import com.copang.product.Product
 import java.time.LocalDateTime
 
+/**
+ * TODO : createAt, updatedAt 없애기
+ */
 data class Cart(
     val id: Long,
     val buyerInfo: UserInfo = UserInfo.empty(),

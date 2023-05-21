@@ -15,6 +15,7 @@ class CartService(
     private val cartRepository: CartRepository,
     private val productRepository: ProductRepository,
 ) {
+    // TODO : 파라미터로 buyerInfo 받기
     fun getAllCarts(): List<Cart> {
         val buyerInfo: UserInfo = AuthUtils.getUserInfo()
         val initialCart: List<Cart> = cartRepository.getAllActiveByBuyerId(buyerId = buyerInfo.id)
@@ -87,5 +88,9 @@ class CartService(
         cartRepository.deleteCart(
             cart = existCart,
         )
+    }
+
+    fun createOrder(cart: Cart) {
+        cartRepository.createOrder(cart)
     }
 }

@@ -1,15 +1,10 @@
 package com.copang.product
 
-import com.copang.common.BaseEntity
+import java.time.LocalDateTime
 import javax.persistence.*
 
-@Entity
-@Table(name = "order_product")
+@Embeddable
 class ProductEntity(
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
 
     @Column(name = "code")
     val code: String,
@@ -36,11 +31,11 @@ class ProductEntity(
     @Enumerated(EnumType.STRING)
     val status: ProductStatus,
 
-) : BaseEntity()
+) {
+    @Column(name = "created_at", updatable = false)
+    var createdAt: LocalDateTime? = null
 
-enum class ProductStatus {
-    CREATED,
-    BUYING,
-    BUYED,
-    REFUNDED,
+    @Column(name = "updated_at")
+    var updatedAt: LocalDateTime? = null
 }
+
