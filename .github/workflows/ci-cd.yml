@@ -1,82 +1,55 @@
-#name: CI/CD
-#
-#on:
-#  push:
-#    branches:
-#      - develop
-#
-#permissions:
-#  contents: read
-#
-#jobs:
-#  CI-CD:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#
-#      - name: Set up JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: zulu
-#          java-version: 17
-#
-#      - name: Gradle Caching
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
-#
-#      - name: Config File Injection
-#        if: contains(github.ref, 'develop')
-#        env:
-#          API_SECRET: ${{ secrets.PROPERTIES_API }}
-#          API_SECRET_DIR: ./copang-order-api/src/main/resources
-#          API_SECRET_FILE_NAME: api-config.yml
-#          DB_SECRET: ${{ secrets.PROPERTIES_DB }}
-#          DB_SECRET_DIR: ./copang-order-infrastructure/src/main/resources
-#          DB_SECRET_FILE_NAME: db-config.yml
-#        run: |
-#            echo $API_SECRET | base64 --decode > $API_SECRET_DIR/$API_SECRET_FILE_NAME
-#            echo $DB_SECRET | base64 --decode > $DB_SECRET_DIR/$DB_SECRET_FILE_NAME
-#        shell: bash
-#
-#      - name: Build with Gradle
-#        run: ./gradlew build
-#
-#      - name: Deliver File
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ secrets.SSH_HOST_DEV }}
-#          username: ${{ secrets.SSH_USERNAME_DEV }}
-#          key: ${{ secrets.SSH_KEY_DEV }}
-#          port: ${{ secrets.SSH_PORT_DEV }}
-#          source: "build/libs/*.jar"
-#          target: "source"
-#          rm: true
-#
-#      - name: Deploy
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.SSH_HOST_DEV }}
-#          username: ${{ secrets.SSH_USERNAME_DEV }}
-#          key: ${{ secrets.SSH_KEY_DEV }}
-#          port: ${{ secrets.SSH_PORT_DEV }}
-#          script: |
-#              SOURCE_DIR=source/build/libs
-#              FILE_NAME=`find $SOURCE_DIR/*.jar -printf "%f\n"`
-#              PID=`ps -ef | grep occupying | grep sudo | grep -v "bash -c" | awk '{print $2}'`
-#
-#              if [ -z "$PID" ]; then
-#                      echo "#### THERE IS NO PROCESS ####"
-#              else
-#                      echo "#### KILL $PID ####"
-#                      sudo kill $PID
-#              fi
-#
-#              echo "#### RUN $SOURCE_DIR/$FILE_NAME ####"
-#
-#              sudo java -jar $SOURCE_DIR/$FILE_NAME -Dspring.profiles.active=dev > /dev/null 2>&1 &
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Config File Injection
+        if: contains(github.ref, 'develop')
+        env:
+          API_SECRET: ${{ secrets.PROPERTIES_API }}
+          API_SECRET_DIR: ./copang-order-api/src/main/resources
+          API_SECRET_FILE_NAME: api-config.yml
+          DB_SECRET: ${{ secrets.PROPERTIES_DB }}
+          DB_SECRET_DIR: ./copang-order-infrastructure/src/main/resources
+          DB_SECRET_FILE_NAME: db-config.yml
+        run: |
+            echo $API_SECRET | base64 --decode > $API_SECRET_DIR/$API_SECRET_FILE_NAME
+            echo $DB_SECRET | base64 --decode > $DB_SECRET_DIR/$DB_SECRET_FILE_NAME
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Docker build & push to dev
+        if: contains(github.ref, 'develop')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build --platform amd64 -f Dockerfile-dev -t ${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_REPO }}
