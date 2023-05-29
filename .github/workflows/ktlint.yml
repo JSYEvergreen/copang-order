@@ -1,7 +1,11 @@
 name: ktlint
 
 on:
-  pull_request:
+  workflow_run:
+    workflows:
+      - First Workflow
+    types:
+      - completed
 
 jobs:
   ktlint:
