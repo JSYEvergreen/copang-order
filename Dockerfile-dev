@@ -1,0 +1,5 @@
+FROM openjdk:17-jdk-slim
+EXPOSE 8080
+ARG JAR_FILE=/copang-order-api/build/libs/copang-order-api-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} copang-dev.jar
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","/copang-dev.jar"]
