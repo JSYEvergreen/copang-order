@@ -12,7 +12,6 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21" apply false
 }
 
-
 allprojects {
     group = "com.example"
     version = "0.0.1-SNAPSHOT"

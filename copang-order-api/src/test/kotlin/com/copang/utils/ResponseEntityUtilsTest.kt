@@ -1,10 +1,10 @@
 package com.copang.utils
 
 import com.copang.auth.UserInfo
-import com.copang.common.utils.ResponseEntityUtils
+import com.copang.common.ApiResponse
 import com.copang.common.exception.CopangException
 import com.copang.common.exception.ErrorType
-import com.copang.common.ApiResponse
+import com.copang.common.utils.ResponseEntityUtils
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -49,7 +49,8 @@ class ResponseEntityUtilsTest {
         val givenApiCall: () -> ResponseEntity<ApiResponse<Any?>> = {
             ResponseEntity<ApiResponse<Any?>>(
                 ApiResponse.fail(errorCode = givenErrorCode, message = givenMessage),
-                HttpStatus.INTERNAL_SERVER_ERROR)
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
 
         // when

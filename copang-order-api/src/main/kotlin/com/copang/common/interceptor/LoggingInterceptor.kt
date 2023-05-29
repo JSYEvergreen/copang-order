@@ -31,10 +31,12 @@ class LoggingInterceptor : ClientHttpRequestInterceptor {
             responseBody = getResponseBody(response.body)
         )
 
-        logger.info { """
+        logger.info {
+            """
             |
             |${httpLogFormat.toPrettyJsonString()}
-        """.trimMargin() }
+        """.trimMargin()
+        }
 
         return response
     }

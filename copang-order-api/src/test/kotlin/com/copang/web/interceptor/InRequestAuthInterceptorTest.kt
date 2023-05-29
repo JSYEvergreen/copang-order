@@ -2,9 +2,9 @@ package com.copang.web.interceptor
 
 import com.copang.auth.AuthRepository
 import com.copang.auth.UserInfo
-import com.copang.common.interceptor.InRequestAuthInterceptor
 import com.copang.common.exception.CopangException
 import com.copang.common.exception.ErrorType
+import com.copang.common.interceptor.InRequestAuthInterceptor
 import com.copang.common.utils.AuthUtils
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe

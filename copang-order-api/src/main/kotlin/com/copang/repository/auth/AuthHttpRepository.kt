@@ -26,7 +26,7 @@ class AuthHttpRepository(
                 errorType = ErrorType.AUTH_SERVER_ERROR,
                 apiCall = {
                     copangRestTemplate.exchange<ApiResponse<UserInfo>>(
-                        "${authServerUrl}/login",
+                        "$authServerUrl/login",
                         HttpMethod.GET,
                         null,
                     )

@@ -11,7 +11,7 @@ import javax.validation.Valid
 @RestController
 class CartController(
     private val cartService: CartService,
-){
+) {
     @GetMapping("/order/api/carts/buyer")
     fun getAllCarts(): ApiResponse<AllCartsResponse> =
         ApiResponse.success(
