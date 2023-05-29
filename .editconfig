@@ -1,0 +1,21 @@
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+# max_line_length = 120
+tab_width = 4
+ij_continuation_indent_size = 4
+ij_visual_guides = 120
+ij_properties_keep_blank_lines = true
+
+[{*.kt,*.kts}]
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+disabled_rules=no-wildcard-imports, max-line-length
+
+[{*.yaml,*.yml}]
+indent_size = 2
