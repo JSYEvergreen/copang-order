@@ -6,7 +6,6 @@ plugins {
     id("org.springframework.boot") version "2.7.10" apply false
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
     id("org.jlleitschuh.gradle.ktlint") version "11.1.0"
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21" apply false
     kotlin("plugin.jpa") version "1.6.21" apply false
@@ -17,7 +16,6 @@ allprojects {
     version = "0.0.1-SNAPSHOT"
 
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "kover")
 
     repositories {
         mavenCentral()

@@ -6,69 +6,19 @@ on:
 
 jobs:
   test:
-    if: github.event.pull_request.draft == false
-    runs-on: [ Linux ]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: zulu
-          java-version: 11
+          java-version: 17
+          cache: gradle
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Test with Gradle
-        run: ./gradlew koverMergedXmlReport
-
-      - name: Publish Unit Test Results
-        uses: actions/3rd-party_enricomi_publish-unit-test-result-action@v1
-        with:
-          files: |
-            ${{ github.workspace }}/**/build/test-results/**/*.xml
-            ${{ github.workspace }}/**/**/build/test-results/**/*.xml
-
-      - name: Add coverage to PR
-        id: jacoco
-        uses: actions/jacoco-report@v1.3
-        with:
-          paths: ${{ github.workspace }}/build/reports/kover/merged/xml/report.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 40
-          min-coverage-changed-files: 60
-          update-comment: true
-          title: Test Coverage
-
-      - name: mkdir
-        if: failure()
-        run: mkdir test-reports
-
-      - name: copy test-report
-        if: failure()
-        run: find . -name reports | awk '{printf "mkdir -p ./test-reports/%s && mv %s ./test-reports/%s\n", $0, $0, $0}' | bash
-
-      - name: Tar test-report
-        if: failure()
-        run: tar -cvf reports.tar test-reports
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: test-report
-          path: reports.tar
-
-      - name: Trigger Second Workflow
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: workflow } = await octokit.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'ktlint.yml',
-              ref: context.ref
-            });
-            console.log(`Triggered second_workflow with run ID: ${workflow.id}`);
+        run: ./gradlew test
