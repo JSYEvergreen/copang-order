@@ -6,7 +6,7 @@ on:
       - develop
 
 permissions:
-  content: read
+  contents: read
 
 jobs:
   CI-CD:
@@ -56,7 +56,7 @@ jobs:
         run: |
           docker login -u $DOCKER_USERNAME | base 64 --decode -p $DOCKER_PW | base 64 --decode
           docker build -f Dockerfile-dev -t $DOCKER_REPO/copang-dev .
-          docker push $DOCKER_REPO/copang-dev
+          docker push $DOCKER_REPO/copangg-dev
 
       - name: Deploy to dev
         uses: appleboy/ssh-action@master
