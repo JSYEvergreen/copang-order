@@ -12,6 +12,6 @@ class WebConfig(
 ) : WebMvcConfigurer {
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-         registry.addInterceptor(InRequestAuthInterceptor(authRepository))
+        registry.addInterceptor(InRequestAuthInterceptor(authRepository))
     }
 }

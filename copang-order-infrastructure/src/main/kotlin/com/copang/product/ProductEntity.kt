@@ -38,4 +38,3 @@ class ProductEntity(
     @Column(name = "updated_at")
     var updatedAt: LocalDateTime? = null
 }
-

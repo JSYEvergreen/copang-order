@@ -26,4 +26,3 @@ enum class ErrorType(
     PRODUCT_QUANTITY_EXCEEDED_ERROR("32002", "상품의 재고가 모자릅니다."),
     ;
 }
-

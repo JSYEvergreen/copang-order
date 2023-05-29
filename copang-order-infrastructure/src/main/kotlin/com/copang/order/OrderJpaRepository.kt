@@ -35,4 +35,3 @@ internal class OrderJpaRepository(
 }
 
 internal interface OrderInnerJpaRepository : JpaRepository<OrderEntity, Long>
-

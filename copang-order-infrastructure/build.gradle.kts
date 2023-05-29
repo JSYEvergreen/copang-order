@@ -13,7 +13,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
 
-    testImplementation(project(":tests"))
+    testImplementation(testFixtures(project(":copang-order-domain")))
 }
 
 allOpen {

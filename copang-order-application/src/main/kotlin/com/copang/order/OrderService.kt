@@ -2,7 +2,6 @@ package com.copang.order
 
 import com.copang.auth.UserInfo
 import com.copang.cart.Cart
-import com.copang.cart.CartRepository
 import com.copang.cart.CartService
 import org.springframework.stereotype.Service
 import java.util.*
