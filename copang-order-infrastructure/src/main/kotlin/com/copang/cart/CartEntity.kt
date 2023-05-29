@@ -31,7 +31,7 @@ class CartEntity(
     var deletedAt: LocalDateTime? = null
         protected set
 
-    fun update(quantity: Int, status: CartStatus): CartEntity {
+    fun update(quantity: Int = this.quantity, status: CartStatus): CartEntity {
         this.quantity = quantity
         this.status = status
         return this

@@ -45,3 +45,10 @@ data class Product(
 
     fun addQuantity(addQuantity: Int) = copy(quantity = this.quantity + addQuantity)
 }
+
+enum class ProductStatus {
+    CREATED,
+    BUYING,
+    BUYED,
+    REFUNDED,
+}
