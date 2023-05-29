@@ -40,14 +40,12 @@ jobs:
           DB_SECRET_DIR: ./copang-order-infrastructure/src/main/resources
           DB_SECRET_FILE_NAME: db-config.yml
         run: |
-            touch $API_SECRET_DIR/$API_SECRET_FILE_NAME
             echo $API_SECRET | base64 --decode > $API_SECRET_DIR/$API_SECRET_FILE_NAME
-            touch $DB_SECRET_DIR/$DB_SECRET_FILE_NAME
             echo $DB_SECRET | base64 --decode > $DB_SECRET_DIR/$DB_SECRET_FILE_NAME
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
+        run: ./gradlew build
 
       - name: Docker build & push to dev
         if: contains(github.ref, 'develop')
@@ -56,7 +54,7 @@ jobs:
           DOCKER_PW: ${{ secrets.DOCKER_PW }}
           DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
         run: |
-          docker login -u $DOCKER_USERNAME | base 64 --decode -p $DOCKER_PW | base 64 --decode
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PW
           docker build -f Dockerfile-dev -t $DOCKER_REPO/copang-dev .
           docker push $DOCKER_REPO/copangg-dev
 
