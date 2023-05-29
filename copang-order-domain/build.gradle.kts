@@ -5,3 +5,7 @@ tasks.getByName("jar") {
 tasks.getByName("bootJar") {
     enabled = false
 }
+
+plugins {
+    `java-test-fixtures`
+}

@@ -5,5 +5,4 @@ include(
     "copang-order-infrastructure",
     "copang-order-application",
     "copang-order-api",
-    "tests",
 )

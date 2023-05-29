@@ -10,5 +10,5 @@ dependencies {
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("org.hibernate.validator:hibernate-validator:6.0.21.Final")
 
-    testImplementation(project(":tests"))
+    testImplementation(testFixtures(project(":copang-order-domain")))
 }

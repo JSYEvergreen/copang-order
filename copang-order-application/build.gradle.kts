@@ -12,5 +12,5 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter")
 
-    testImplementation(project(":tests"))
+    testImplementation(testFixtures(project(":copang-order-domain")))
 }
