@@ -34,10 +34,10 @@ jobs:
         if: contains(github.ref, 'develop')
         env:
           API_SECRET: ${{ secrets.PROPERTIES_API }}
-          API_SECRET_DIR: ./src/copang/copang-order-api/src/main/resources
+          API_SECRET_DIR: ./copang-order-api/src/main/resources
           API_SECRET_FILE_NAME: api-config.yml
           DB_SECRET: ${{ secrets.PROPERTIES_DB }}
-          DB_SECRET_DIR: ./src/copang/copang-order-infrastructure/src/main/resources
+          DB_SECRET_DIR: ./copang-order-infrastructure/src/main/resources
           DB_SECRET_FILE_NAME: db-config.yml
         run: |
             touch $API_SECRET_DIR/$API_SECRET_FILE_NAME
