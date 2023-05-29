@@ -1,0 +1,73 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  content: read
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Config File Injection
+        if: contains(github.ref, 'develop')
+        env:
+          API_SECRET: ${{ secrets.PROPERTIES_API }}
+          API_SECRET_DIR: ./src/copang/copang-order-api/src/main/resources
+          API_SECRET_FILE_NAME: api-config.yml
+          DB_SECRET: ${{ secrets.PROPERTIES_DB }}
+          DB_SECRET_DIR: ./src/copang/copang-order-infrastructure/src/main/resources
+          DB_SECRET_FILE_NAME: db-config.yml
+        run: |
+            echo $API_SECRET | base64 --decode > $API_SECRET_DIR/$API_SECRET_FILE_NAME
+            echo $DB_SECRET | base64 --decode > $DB_SECRET_DIR/$DB_SECRET_FILE_NAME
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
+
+      - name: Docker build & push to dev
+        if: contains(github.ref, 'develop')
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PW: ${{ secrets.DOCKER_PW }}
+          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+        run: |
+          docker login -u $DOCKER_USERNAME | base 64 --decode -p $DOCKER_PW | base 64 --decode
+          docker build -f Dockerfile-dev -t $DOCKER_REPO/copang-dev .
+          docker push $DOCKER_REPO/copang-dev
+
+      - name: Deploy to dev
+        uses: appleboy/ssh-action@master
+        id: deploy-dev
+        if: contains(github.ref, 'develop')
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          #key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/dotoriham-dev
