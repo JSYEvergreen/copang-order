@@ -31,8 +31,15 @@ subprojects {
     apply(plugin = "kotlin-spring")
     apply(plugin = "kotlin-jpa")
 
+    dependencyManagement {
+        imports {
+            mavenBom("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+        }
+    }
+
     dependencies {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+        implementation("io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("io.github.microutils:kotlin-logging:2.1.23")

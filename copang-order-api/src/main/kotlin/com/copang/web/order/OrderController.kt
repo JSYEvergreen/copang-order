@@ -1,6 +1,6 @@
 package com.copang.web.order
 
-import com.copang.common.ApiResponse
+import com.copang.common.utils.ApiResponse
 import com.copang.common.utils.AuthUtils
 import com.copang.order.OrderService
 import org.springframework.web.bind.annotation.PostMapping

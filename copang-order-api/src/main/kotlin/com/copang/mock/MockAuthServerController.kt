@@ -1,7 +1,7 @@
 package com.copang.mock
 
 import com.copang.auth.UserInfo
-import com.copang.common.ApiResponse
+import com.copang.common.utils.ApiResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController

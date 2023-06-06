@@ -13,6 +13,17 @@ spring:
   config:
     activate:
       on-profile: local
+# JPA
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        use_sql_comments: true
+
 logging:
   level:
     org:
@@ -21,16 +32,6 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
-# JPA
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-        use_sql_comments: true
 ---
 ################################ test ################################
 spring:

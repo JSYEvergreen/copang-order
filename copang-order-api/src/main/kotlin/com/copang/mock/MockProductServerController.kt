@@ -1,6 +1,6 @@
 package com.copang.mock
 
-import com.copang.common.ApiResponse
+import com.copang.common.utils.ApiResponse
 import com.copang.repository.product.ProductsBodyHttpResponse
 import com.copang.repository.product.ProductsHttpRequest
 import com.copang.repository.product.ProductsHttpResponse

@@ -29,7 +29,6 @@ class WebClientConfig {
                             .addHandlerLast(WriteTimeoutHandler(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS))
                     }
             ))
-            .filter(WebClientOutFilterFunction())
             .build()
     }
 }

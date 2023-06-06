@@ -3,6 +3,7 @@ package com.copang.common
 import com.copang.common.exception.CopangException
 import com.copang.common.exception.ErrorType
 import com.copang.common.utils.AccessTokenLogger.Companion.accessTokenLogger
+import com.copang.common.utils.ApiResponse
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.validation.FieldError

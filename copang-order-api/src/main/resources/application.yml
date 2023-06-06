@@ -1,52 +1,5 @@
 server:
   port: 8080
-  config:
-    import: api-config.yml
 spring:
   config:
-    import: application-db.yml
-
----
-################################ local ################################
-spring:
-  config:
-    activate:
-      on-profile: local
-
-copang:
-  servers:
-    auth: http://copang.r-e.kr/buyer
-    product: http://localhost:8080/product
----
-################################ test ################################
-spring:
-  config:
-    activate:
-      on-profile: test
-
-copang:
-  servers:
-    auth: dummy
-    product: dummy
----
-################################ dev ################################
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-copang:
-  servers:
-    auth: http://copang.r-e.kr/buyer
-    product: http://localhost:8080
----
-################################ live ################################
-spring:
-  config:
-    activate:
-      on-profile: live
-
-copang:
-  servers:
-    auth: http://localhost:3000
-    product: http://localhost:8080
+    import: application-db.yml, api-config.yml

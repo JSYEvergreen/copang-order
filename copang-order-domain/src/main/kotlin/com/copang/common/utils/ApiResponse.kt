@@ -1,4 +1,4 @@
-package com.copang.common
+package com.copang.common.utils
 
 import com.copang.common.exception.ErrorType
 import com.fasterxml.jackson.annotation.JsonInclude
