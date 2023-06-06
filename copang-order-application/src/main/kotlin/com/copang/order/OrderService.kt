@@ -9,7 +9,7 @@ import java.util.*
 @Service
 class OrderService(
     private val cartService: CartService,
-    private val orderRepository: OrderRepository,
+    private val orderWriter: OrderWriter,
 ) {
     fun createOrder(buyer: UserInfo): String {
         val carts: List<Cart> = cartService.getAllCarts()
@@ -20,7 +20,7 @@ class OrderService(
             buyerInfo = buyer,
             products = carts.map { it.product },
         )
-        orderRepository.createOrder(order)
+        orderWriter.createOrder(order)
         return order.orderCode
     }
 

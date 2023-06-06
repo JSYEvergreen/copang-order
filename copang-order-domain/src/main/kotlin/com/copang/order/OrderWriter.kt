@@ -1,5 +1,5 @@
 package com.copang.order
 
-interface OrderRepository {
+interface OrderWriter {
     fun createOrder(order: Order)
 }
