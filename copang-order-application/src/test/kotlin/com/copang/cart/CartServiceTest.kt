@@ -14,9 +14,14 @@ import io.mockk.*
 import org.junit.jupiter.api.Test
 
 class CartServiceTest {
-    private val cartRepository = mockk<CartRepository>()
+    private val cartReader = mockk<CartReader>()
+    private val cartWriter = mockk<CartWriter>()
     private val productReader = mockk<ProductReader>()
-    private val sut = CartService(cartRepository, productReader)
+    private val sut = CartService(
+        cartReader,
+        cartWriter,
+        productReader,
+    )
 
     @Test
     fun `전체 카트 정보를 가져올 때 유저 정보가 없으면 에러가 발생한다`() {
@@ -36,14 +41,14 @@ class CartServiceTest {
         // given
         val givenUserInfo = UserInfoTestData.userInfo()
         AuthUtils.setUserInfo(givenUserInfo)
-        every { cartRepository.getAllActiveByBuyerId(any()) } returns emptyList()
+        every { cartReader.getAllActiveByBuyerId(any()) } returns emptyList()
 
         // when
         val actualResult: List<Cart> = sut.getAllCarts()
 
         // then
         actualResult shouldBe emptyList()
-        verify(exactly = 1) { cartRepository.getAllActiveByBuyerId(any()) }
+        verify(exactly = 1) { cartReader.getAllActiveByBuyerId(any()) }
         verify(exactly = 0) { productReader.readAllIn(any()) }
     }
 
@@ -57,15 +62,15 @@ class CartServiceTest {
             CartTestData.cart(
                 id = 1L,
                 buyerInfo = givenUserInfo,
-                product = ProductTestData.product(id = 1L, quantity = 2)
+                product = ProductTestData.product(id = 1L, quantity = 2),
             ),
             CartTestData.cart(
                 id = 2L,
                 buyerInfo = givenUserInfo,
-                product = ProductTestData.product(id = 2L, quantity = 3)
-            )
+                product = ProductTestData.product(id = 2L, quantity = 3),
+            ),
         )
-        every { cartRepository.getAllActiveByBuyerId(any()) } returns givenCarts
+        every { cartReader.getAllActiveByBuyerId(any()) } returns givenCarts
 
         val givenProducts: List<Product> = listOf(
             ProductTestData.product(id = 1L, code = "code1", quantity = 2),
@@ -78,7 +83,7 @@ class CartServiceTest {
 
         // then
         actualResult.size shouldBe 2
-        verify(exactly = 1) { cartRepository.getAllActiveByBuyerId(any()) }
+        verify(exactly = 1) { cartReader.getAllActiveByBuyerId(any()) }
         verify(exactly = 1) { productReader.readAllIn(any()) }
     }
 
@@ -89,7 +94,7 @@ class CartServiceTest {
         val givenProductId = 1L
         val givenQuantity = 200
         every {
-            cartRepository.getActiveCartByBuyerIdAndProductId(
+            cartReader.getActiveCartByBuyerIdAndProductId(
                 buyerId = givenUserInfo.id,
                 productId = givenProductId,
             )
@@ -107,9 +112,9 @@ class CartServiceTest {
         }
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveCartByBuyerIdAndProductId(any(), any()) }
         verify(exactly = 1) { productReader.readAllIn(any()) }
-        verify(exactly = 0) { cartRepository.addCart(any()) }
+        verify(exactly = 0) { cartWriter.addCart(any()) }
 
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_PRODUCT_ERROR.errorCode
     }
@@ -121,7 +126,7 @@ class CartServiceTest {
         val givenProductId = 1L
         val givenQuantity = 200
         every {
-            cartRepository.getActiveCartByBuyerIdAndProductId(
+            cartReader.getActiveCartByBuyerIdAndProductId(
                 buyerId = givenUserInfo.id,
                 productId = givenProductId,
             )
@@ -142,9 +147,9 @@ class CartServiceTest {
         }
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveCartByBuyerIdAndProductId(any(), any()) }
         verify(exactly = 1) { productReader.readAllIn(any()) }
-        verify(exactly = 0) { cartRepository.addCart(any()) }
+        verify(exactly = 0) { cartWriter.addCart(any()) }
 
         actualThrownException.errorCode shouldBe ErrorType.PRODUCT_QUANTITY_EXCEEDED_ERROR.errorCode
     }
@@ -156,7 +161,7 @@ class CartServiceTest {
         val givenProductId = 1L
         val givenQuantity = 2
         every {
-            cartRepository.getActiveCartByBuyerIdAndProductId(
+            cartReader.getActiveCartByBuyerIdAndProductId(
                 buyerId = givenUserInfo.id,
                 productId = givenProductId,
             )
@@ -166,7 +171,7 @@ class CartServiceTest {
             ProductTestData.product(id = 1L, code = "code1", quantity = 2),
         )
         every { productReader.readAllIn(any()) } returns givenProducts
-        every { cartRepository.addCart(any()) } just Runs
+        every { cartWriter.addCart(any()) } just Runs
 
         // when
         sut.addCart(
@@ -176,11 +181,11 @@ class CartServiceTest {
         )
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveCartByBuyerIdAndProductId(any(), any()) }
         verify(exactly = 1) { productReader.readAllIn(any()) }
 
         val capturingSlog = slot<Cart>()
-        verify(exactly = 1) { cartRepository.addCart(cart = capture(capturingSlog)) }
+        verify(exactly = 1) { cartWriter.addCart(cart = capture(capturingSlog)) }
         val cart: Cart = capturingSlog.captured
         cart.product.quantity shouldBe givenQuantity
     }
@@ -193,16 +198,16 @@ class CartServiceTest {
         val givenQuantity = 2
         val givenExistCart = CartTestData.cart(
             id = 1L,
-            product = ProductTestData.product(id = 1L, quantity = 1)
+            product = ProductTestData.product(id = 1L, quantity = 1),
         )
         every {
-            cartRepository.getActiveCartByBuyerIdAndProductId(
+            cartReader.getActiveCartByBuyerIdAndProductId(
                 buyerId = givenUserInfo.id,
                 productId = givenProductId,
             )
         } returns givenExistCart
 
-        every { cartRepository.updateCart(any()) } just Runs
+        every { cartWriter.updateCart(any()) } just Runs
 
         // when
         sut.addCart(
@@ -212,10 +217,10 @@ class CartServiceTest {
         )
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveCartByBuyerIdAndProductId(any(), any()) }
 
         val capturingSlog = slot<Cart>()
-        verify(exactly = 1) { cartRepository.updateCart(cart = capture(capturingSlog)) }
+        verify(exactly = 1) { cartWriter.updateCart(cart = capture(capturingSlog)) }
         val cart: Cart = capturingSlog.captured
         cart.product.quantity shouldBe givenExistCart.product.quantity + givenQuantity
     }
@@ -227,7 +232,7 @@ class CartServiceTest {
         val givenCartId = 1L
         val givenQuantity = 2
         every {
-            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+            cartReader.getActiveByIdAndBuyerIdOrThrows(
                 cartId = givenCartId,
                 buyerId = givenUserInfo.id,
             )
@@ -243,7 +248,7 @@ class CartServiceTest {
         }
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_CART_ERROR.errorCode
     }
 
@@ -256,10 +261,10 @@ class CartServiceTest {
 
         val givenExistCart = CartTestData.cart(
             id = 1L,
-            product = ProductTestData.product(id = 1L, quantity = 1)
+            product = ProductTestData.product(id = 1L, quantity = 1),
         )
         every {
-            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+            cartReader.getActiveByIdAndBuyerIdOrThrows(
                 cartId = givenCartId,
                 buyerId = givenUserInfo.id,
             )
@@ -277,7 +282,7 @@ class CartServiceTest {
         }
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
         verify(exactly = 1) { productReader.readAllIn(any()) }
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_PRODUCT_ERROR.errorCode
     }
@@ -291,10 +296,10 @@ class CartServiceTest {
 
         val givenExistCart = CartTestData.cart(
             id = 1L,
-            product = ProductTestData.product(id = 1L, quantity = 1)
+            product = ProductTestData.product(id = 1L, quantity = 1),
         )
         every {
-            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+            cartReader.getActiveByIdAndBuyerIdOrThrows(
                 cartId = givenCartId,
                 buyerId = givenUserInfo.id,
             )
@@ -315,7 +320,7 @@ class CartServiceTest {
         }
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
         verify(exactly = 1) { productReader.readAllIn(any()) }
         actualThrownException.errorCode shouldBe ErrorType.PRODUCT_QUANTITY_EXCEEDED_ERROR.errorCode
     }
@@ -327,7 +332,7 @@ class CartServiceTest {
         val givenCartId = 1L
 
         every {
-            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+            cartReader.getActiveByIdAndBuyerIdOrThrows(
                 cartId = givenCartId,
                 buyerId = givenUserInfo.id,
             )
@@ -342,7 +347,7 @@ class CartServiceTest {
         }
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { cartReader.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_CART_ERROR.errorCode
     }
 
@@ -354,21 +359,21 @@ class CartServiceTest {
 
         val givenExistCart = CartTestData.cart(
             id = 1L,
-            product = ProductTestData.product(id = 1L, quantity = 1)
+            product = ProductTestData.product(id = 1L, quantity = 1),
         )
         every {
-            cartRepository.getActiveByIdAndBuyerIdOrThrows(
+            cartReader.getActiveByIdAndBuyerIdOrThrows(
                 cartId = givenCartId,
                 buyerId = givenUserInfo.id,
             )
         } returns givenExistCart
-        every { cartRepository.deleteCart(any()) } just Runs
+        every { cartWriter.deleteCart(any()) } just Runs
 
         // when
         sut.deleteCart(buyer = givenUserInfo, cartId = givenCartId)
 
         // then
-        verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
-        verify(exactly = 1) { cartRepository.deleteCart(any()) }
+        verify(exactly = 1) { cartReader.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
+        verify(exactly = 1) { cartWriter.deleteCart(any()) }
     }
 }

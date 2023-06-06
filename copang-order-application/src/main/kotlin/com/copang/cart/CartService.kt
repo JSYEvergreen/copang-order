@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class CartService(
-    private val cartRepository: CartRepository,
+    private val cartReader: CartReader,
+    private val cartWriter: CartWriter,
     private val productReader: ProductReader,
 ) {
     // TODO : 파라미터로 buyerInfo 받기
     fun getAllCarts(): List<Cart> {
         val buyerInfo: UserInfo = AuthUtils.getUserInfo()
-        val initialCart: List<Cart> = cartRepository.getAllActiveByBuyerId(buyerId = buyerInfo.id)
+        val initialCart: List<Cart> = cartReader.getAllActiveByBuyerId(buyerId = buyerInfo.id)
         if (initialCart.isEmpty()) {
             return emptyList()
         }
@@ -34,10 +35,10 @@ class CartService(
     }
 
     fun addCart(buyer: UserInfo, productId: Long, quantity: Int) {
-        val existCart = cartRepository.getActiveCartByBuyerIdAndProductId(buyer.id, productId)
+        val existCart = cartReader.getActiveCartByBuyerIdAndProductId(buyer.id, productId)
         if (existCart.isEmpty()) {
             val product = getProductCartAddable(productId, quantity)
-            cartRepository.addCart(
+            cartWriter.addCart(
                 cart = Cart.empty().filledOf(
                     buyerInfo = buyer,
                     product = product.quantityOf(quantity),
@@ -45,7 +46,7 @@ class CartService(
             )
             return
         }
-        cartRepository.updateCart(
+        cartWriter.updateCart(
             cart = existCart.filledOf(
                 buyerInfo = buyer,
                 product = existCart.product.addQuantity(quantity),
@@ -69,13 +70,13 @@ class CartService(
     }
 
     fun updateCart(buyer: UserInfo, cartId: Long, quantity: Int) {
-        val existCart = cartRepository.getActiveByIdAndBuyerIdOrThrows(cartId = cartId, buyerId = buyer.id)
+        val existCart = cartReader.getActiveByIdAndBuyerIdOrThrows(cartId = cartId, buyerId = buyer.id)
         getProductCartAddable(
             productId = existCart.product.id,
             quantity = quantity,
         )
 
-        cartRepository.updateCart(
+        cartWriter.updateCart(
             cart = existCart.filledOf(
                 buyerInfo = buyer,
                 product = existCart.product.quantityOf(quantity)
@@ -84,13 +85,13 @@ class CartService(
     }
 
     fun deleteCart(buyer: UserInfo, cartId: Long) {
-        val existCart = cartRepository.getActiveByIdAndBuyerIdOrThrows(cartId = cartId, buyerId = buyer.id)
-        cartRepository.deleteCart(
+        val existCart = cartReader.getActiveByIdAndBuyerIdOrThrows(cartId = cartId, buyerId = buyer.id)
+        cartWriter.deleteCart(
             cart = existCart,
         )
     }
 
     fun createOrder(cart: Cart) {
-        cartRepository.createOrder(cart)
+        cartWriter.createOrder(cart)
     }
 }
