@@ -7,7 +7,7 @@ import com.copang.mock.CartTestData
 import com.copang.mock.ProductTestData
 import com.copang.mock.UserInfoTestData
 import com.copang.product.Product
-import com.copang.product.ProductRepository
+import com.copang.product.ProductReader
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe
 import io.mockk.*
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test
 
 class CartServiceTest {
     private val cartRepository = mockk<CartRepository>()
-    private val productRepository = mockk<ProductRepository>()
-    private val sut = CartService(cartRepository, productRepository)
+    private val productReader = mockk<ProductReader>()
+    private val sut = CartService(cartRepository, productReader)
 
     @Test
     fun `전체 카트 정보를 가져올 때 유저 정보가 없으면 에러가 발생한다`() {
@@ -44,7 +44,7 @@ class CartServiceTest {
         // then
         actualResult shouldBe emptyList()
         verify(exactly = 1) { cartRepository.getAllActiveByBuyerId(any()) }
-        verify(exactly = 0) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 0) { productReader.readAllIn(any()) }
     }
 
     @Test
@@ -71,7 +71,7 @@ class CartServiceTest {
             ProductTestData.product(id = 1L, code = "code1", quantity = 2),
             ProductTestData.product(id = 2L, code = "code2", quantity = 3),
         )
-        every { productRepository.getProductsByIdsIn(any()) } returns givenProducts
+        every { productReader.readAllIn(any()) } returns givenProducts
 
         // when
         val actualResult: List<Cart> = sut.getAllCarts()
@@ -79,7 +79,7 @@ class CartServiceTest {
         // then
         actualResult.size shouldBe 2
         verify(exactly = 1) { cartRepository.getAllActiveByBuyerId(any()) }
-        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 1) { productReader.readAllIn(any()) }
     }
 
     @Test
@@ -95,7 +95,7 @@ class CartServiceTest {
             )
         } returns Cart.empty()
 
-        every { productRepository.getProductsByIdsIn(any()) } returns emptyList()
+        every { productReader.readAllIn(any()) } returns emptyList()
 
         // when
         val actualThrownException = shouldThrowExactly<CopangException> {
@@ -108,7 +108,7 @@ class CartServiceTest {
 
         // then
         verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
-        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 1) { productReader.readAllIn(any()) }
         verify(exactly = 0) { cartRepository.addCart(any()) }
 
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_PRODUCT_ERROR.errorCode
@@ -130,7 +130,7 @@ class CartServiceTest {
         val givenProducts: List<Product> = listOf(
             ProductTestData.product(id = 1L, code = "code1", quantity = givenQuantity - 10),
         )
-        every { productRepository.getProductsByIdsIn(any()) } returns givenProducts
+        every { productReader.readAllIn(any()) } returns givenProducts
 
         // when
         val actualThrownException = shouldThrowExactly<CopangException> {
@@ -143,7 +143,7 @@ class CartServiceTest {
 
         // then
         verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
-        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 1) { productReader.readAllIn(any()) }
         verify(exactly = 0) { cartRepository.addCart(any()) }
 
         actualThrownException.errorCode shouldBe ErrorType.PRODUCT_QUANTITY_EXCEEDED_ERROR.errorCode
@@ -165,7 +165,7 @@ class CartServiceTest {
         val givenProducts: List<Product> = listOf(
             ProductTestData.product(id = 1L, code = "code1", quantity = 2),
         )
-        every { productRepository.getProductsByIdsIn(any()) } returns givenProducts
+        every { productReader.readAllIn(any()) } returns givenProducts
         every { cartRepository.addCart(any()) } just Runs
 
         // when
@@ -177,7 +177,7 @@ class CartServiceTest {
 
         // then
         verify(exactly = 1) { cartRepository.getActiveCartByBuyerIdAndProductId(any(), any()) }
-        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 1) { productReader.readAllIn(any()) }
 
         val capturingSlog = slot<Cart>()
         verify(exactly = 1) { cartRepository.addCart(cart = capture(capturingSlog)) }
@@ -265,7 +265,7 @@ class CartServiceTest {
             )
         } returns givenExistCart
 
-        every { productRepository.getProductsByIdsIn(any()) } returns emptyList()
+        every { productReader.readAllIn(any()) } returns emptyList()
 
         // when
         val actualThrownException = shouldThrowExactly<CopangException> {
@@ -278,7 +278,7 @@ class CartServiceTest {
 
         // then
         verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
-        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 1) { productReader.readAllIn(any()) }
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_PRODUCT_ERROR.errorCode
     }
 
@@ -303,7 +303,7 @@ class CartServiceTest {
         val givenProducts: List<Product> = listOf(
             ProductTestData.product(id = 1L, code = "code1", quantity = givenQuantity - 10),
         )
-        every { productRepository.getProductsByIdsIn(any()) } returns givenProducts
+        every { productReader.readAllIn(any()) } returns givenProducts
 
         // when
         val actualThrownException = shouldThrowExactly<CopangException> {
@@ -316,7 +316,7 @@ class CartServiceTest {
 
         // then
         verify(exactly = 1) { cartRepository.getActiveByIdAndBuyerIdOrThrows(any(), any()) }
-        verify(exactly = 1) { productRepository.getProductsByIdsIn(any()) }
+        verify(exactly = 1) { productReader.readAllIn(any()) }
         actualThrownException.errorCode shouldBe ErrorType.PRODUCT_QUANTITY_EXCEEDED_ERROR.errorCode
     }
 

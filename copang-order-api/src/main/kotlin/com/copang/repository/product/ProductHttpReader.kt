@@ -4,7 +4,7 @@ import com.copang.common.ApiResponse
 import com.copang.common.exception.ErrorType
 import com.copang.common.utils.ResponseEntityUtils
 import com.copang.product.Product
-import com.copang.product.ProductRepository
+import com.copang.product.ProductReader
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
@@ -13,12 +13,12 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 
 @Repository
-class ProductHttpRepository(
+class ProductHttpReader(
     private val copangRestTemplate: RestTemplate,
     @Value("\${copang.servers.product}") private val productServerUrl: String,
-) : ProductRepository {
+) : ProductReader {
 
-    override fun getProductsByIdsIn(productIds: List<Long>): List<Product> {
+    override fun readAllIn(productIds: List<Long>): List<Product> {
         val response: ProductsHttpResponse = ResponseEntityUtils.getOrThrows(
             className = "ProductHttpRepository",
             methodName = "getProductsByIdsIn",

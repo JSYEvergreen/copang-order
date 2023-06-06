@@ -7,13 +7,13 @@ import com.copang.common.utils.AuthUtils
 import com.copang.common.utils.SafeMap
 import com.copang.common.utils.toSafeMap
 import com.copang.product.Product
-import com.copang.product.ProductRepository
+import com.copang.product.ProductReader
 import org.springframework.stereotype.Service
 
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
+    private val productReader: ProductReader,
 ) {
     // TODO : 파라미터로 buyerInfo 받기
     fun getAllCarts(): List<Cart> {
@@ -24,7 +24,7 @@ class CartService(
         }
 
         val productIds = initialCart.map { it.product.id }
-        val productsMap: SafeMap<Long, Product> = productRepository.getProductsByIdsIn(productIds).toSafeMap { it.id }
+        val productsMap: SafeMap<Long, Product> = productReader.readAllIn(productIds).toSafeMap { it.id }
         return initialCart.map {
             it.filledOf(
                 buyerInfo = buyerInfo,
@@ -54,7 +54,7 @@ class CartService(
     }
 
     private fun getProductCartAddable(productId: Long, quantity: Int): Product {
-        val products: List<Product> = productRepository.getProductsByIdsIn(listOf(productId))
+        val products: List<Product> = productReader.readAllIn(listOf(productId))
         if (products.isEmpty()) {
             throw CopangException(ErrorType.NOT_EXIST_PRODUCT_ERROR)
         }
