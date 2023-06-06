@@ -1,6 +1,6 @@
 package com.copang.repository.auth
 
-import com.copang.auth.AuthRepository
+import com.copang.auth.AuthReader
 import com.copang.auth.UserInfo
 import com.copang.common.ApiResponse
 import com.copang.common.exception.ErrorType
@@ -12,16 +12,16 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 
 @Repository
-class AuthHttpRepository(
+class AuthHttpReader(
     private val copangRestTemplate: RestTemplate,
     @Value("\${copang.servers.auth}") private val authServerUrl: String,
-) : AuthRepository {
+) : AuthReader {
 
-    override fun getUserInfoByAccessTokenOrThrows(accessToken: String): UserInfo =
+    override fun readOrThrows(accessToken: String): UserInfo =
         requireNotNull(
             ResponseEntityUtils.getOrThrows(
-                className = "AuthHttpRepository",
-                methodName = "getUserInfoByAccessTokenOrNull",
+                className = "AuthHttpReader",
+                methodName = "readOrThrows",
                 errorMessage = "유저 정보 조회 실패.",
                 errorType = ErrorType.AUTH_SERVER_ERROR,
                 apiCall = {

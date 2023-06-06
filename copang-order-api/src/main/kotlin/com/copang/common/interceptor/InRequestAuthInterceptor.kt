@@ -1,7 +1,7 @@
 package com.copang.common.interceptor
 
 import com.copang.auth.AccessToken
-import com.copang.auth.AuthRepository
+import com.copang.auth.AuthReader
 import com.copang.auth.UserInfo
 import com.copang.common.utils.AuthUtils
 import mu.KotlinLogging
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse
  * 외부에서 들어오는 요청의 accessToken 검증
  */
 class InRequestAuthInterceptor(
-    private val authRepository: AuthRepository,
+    private val authReader: AuthReader,
 ) : HandlerInterceptor {
 
     private val log = KotlinLogging.logger {}
@@ -25,7 +25,7 @@ class InRequestAuthInterceptor(
         )
         AuthUtils.setAccessToken(accessToken)
 
-        val userInfo: UserInfo = authRepository.getUserInfoByAccessTokenOrThrows(accessToken.original())
+        val userInfo: UserInfo = authReader.readOrThrows(accessToken.original())
         AuthUtils.setUserInfo(userInfo)
 
         log.info { "accessToken 검증 완료(accessToken=$accessToken, userInfo=$userInfo)" }

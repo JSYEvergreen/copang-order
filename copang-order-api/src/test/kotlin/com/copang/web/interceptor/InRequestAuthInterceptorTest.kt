@@ -1,6 +1,6 @@
 package com.copang.web.interceptor
 
-import com.copang.auth.AuthRepository
+import com.copang.auth.AuthReader
 import com.copang.auth.UserInfo
 import com.copang.common.exception.CopangException
 import com.copang.common.exception.ErrorType
@@ -18,9 +18,9 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 
 class InRequestAuthInterceptorTest {
-    private val authRepository = mockk<AuthRepository>()
+    private val authReader = mockk<AuthReader>()
     private val sut = InRequestAuthInterceptor(
-        authRepository,
+        authReader,
     )
     private val givenAccessToken = "token"
     private val givenExistUserInfo = UserInfo(
@@ -40,7 +40,7 @@ class InRequestAuthInterceptorTest {
 
         val givenResponse = MockHttpServletResponse()
         val givenHandler = "handler"
-        every { authRepository.getUserInfoByAccessTokenOrThrows(accessToken = any()) } returns givenExistUserInfo
+        every { authReader.readOrThrows(accessToken = any()) } returns givenExistUserInfo
 
         // when
         val actualResult: Boolean = sut.preHandle(
@@ -52,7 +52,7 @@ class InRequestAuthInterceptorTest {
         val actualUserInfo = AuthUtils.getUserInfo()
 
         // then
-        verify(exactly = 1) { authRepository.getUserInfoByAccessTokenOrThrows(accessToken = any()) }
+        verify(exactly = 1) { authReader.readOrThrows(accessToken = any()) }
         actualResult shouldBe true
         actualSavedAccessToken shouldBe givenAccessToken
         actualUserInfo shouldBe givenExistUserInfo
@@ -76,7 +76,7 @@ class InRequestAuthInterceptorTest {
         }
 
         // then
-        verify(exactly = 0) { authRepository.getUserInfoByAccessTokenOrThrows(accessToken = any()) }
+        verify(exactly = 0) { authReader.readOrThrows(accessToken = any()) }
         actualThrownException.errorCode shouldBe ErrorType.NOT_EXIST_TOKEN_ERROR.errorCode
     }
 
@@ -88,7 +88,7 @@ class InRequestAuthInterceptorTest {
         val givenResponse = MockHttpServletResponse()
         val givenHandler = "handler"
         every {
-            authRepository.getUserInfoByAccessTokenOrThrows(accessToken = any())
+            authReader.readOrThrows(accessToken = any())
         } throws CopangException(ErrorType.AUTH_SERVER_ERROR)
 
         // when
@@ -101,7 +101,7 @@ class InRequestAuthInterceptorTest {
         }
 
         // then
-        verify(exactly = 1) { authRepository.getUserInfoByAccessTokenOrThrows(accessToken = any()) }
+        verify(exactly = 1) { authReader.readOrThrows(accessToken = any()) }
         actualThrownException.errorCode shouldBe ErrorType.AUTH_SERVER_ERROR.errorCode
     }
 
